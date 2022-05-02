@@ -8,6 +8,9 @@ public class mushroomEnemyController : MonoBehaviour
     {
         Moving,
         Idle,
+        PlayerDetected,
+        Chase,
+        Attack,
         Knockback,
         Dead
     }
@@ -18,25 +21,48 @@ public class mushroomEnemyController : MonoBehaviour
         wallDistanceToCheck,
         maxHealth,
         knockbackDuration,
+        playerDetectionAreaLength,
+        attackPlayerAreaLength,
+        attackRadius,
+        chaseSpeed = 4f,
+        playerDetectedTimeDuration = 0.5f,
+        chaseTimeDuration = 0.2f;
+
+    public int
         minIdleDuration,
-        maxIdleDuration;
+        maxIdleDuration, 
+        minDamage, 
+        maxDamage;
         
 
-    public Transform groundCheck, wallCheck, Player;
-    public LayerMask ground;
+    public Transform groundCheck, wallCheck, Player, attackPosition, raycastOriginPosition;
+    public LayerMask ground, playerLayer;
     public Vector2 knockbackSpeed;
-    public GameObject hitParticle, deathChunkParticle, deathBloodParticle;
+    public GameObject hitParticle, deathChunkParticle;
 
     private State currentState;
     private Rigidbody2D rb;
     private Animator enemyAnim;
     private Vector2 movement;
+    private RaycastHit2D playerDetectionRaycast, attackPlayerRaycast;
 
-    private bool isGround, isWall, isRight;
-    private float currentHeath, knockbackStartTime, startIdle, idleTime;
-    private int facingDirection, damageDirection;
+    private bool isGround, isWall, isAttacking; 
+    private bool 
+        isPlayerDetectedStateTimeOver,
+        isChasingPlayer;
 
-    // Start is called before the first frame update
+    private float
+        currentHeath,
+        knockbackStartTime,
+        startIdle,
+        idleTime,
+        startPlayerDetectedTime,
+        startChaseTime;
+
+    private float[] attackDetails = new float[2];
+
+    private int facingDirection, damageDirection, damage;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -46,16 +72,30 @@ public class mushroomEnemyController : MonoBehaviour
         facingDirection = 1;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        switch(currentState)
+        playerDetectionRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, playerDetectionAreaLength);
+        attackPlayerRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, attackPlayerAreaLength);
+
+        isGround = Physics2D.Raycast(groundCheck.position, Vector2.down, groundDistanceToCheck, ground);
+        isWall = Physics2D.Raycast(wallCheck.position, transform.right, wallDistanceToCheck, ground);
+
+        switch (currentState)
         {
             case State.Moving:
                 UpdateMovingState();
                 break;
             case State.Idle:
                 UpdateIdleState();
+                break;
+            case State.PlayerDetected:
+                UpdatePlayerDetectedState();
+                break;
+            case State.Chase:
+                UpdateChaseState();
+                break;
+            case State.Attack:
+                UpdateAttackState();
                 break;
             case State.Knockback:
                 UpdateKnockbackState();
@@ -66,11 +106,6 @@ public class mushroomEnemyController : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        
-    }
-
     #region Moving State
     private void EnterMovingState()
     {
@@ -79,19 +114,16 @@ public class mushroomEnemyController : MonoBehaviour
 
     private void UpdateMovingState()
     {
-        isGround = Physics2D.Raycast(groundCheck.position, Vector2.down, groundDistanceToCheck, ground);
-        isWall = Physics2D.Raycast(wallCheck.position, transform.right, wallDistanceToCheck, ground);
-
+        //Debug.Log("UpdateMovingState");
+        
         if (!isGround || isWall)
-        {
-            //Switch to Idle state
             SwitchState(State.Idle);
-        }
         else
-        {
-            movement.Set(speedCoefficient * facingDirection, rb.velocity.y);
-            rb.velocity = movement;
-        }
+            SetVelocity(speedCoefficient);
+
+        if (playerDetectionRaycast.collider != null)
+            if (playerDetectionRaycast.collider.name == "Player" && isGround)
+                SwitchState(State.PlayerDetected);
     }
 
     private void ExitMovingState()
@@ -117,10 +149,95 @@ public class mushroomEnemyController : MonoBehaviour
             FaceFlip();
             SwitchState(State.Moving);
         }
+
+        if (playerDetectionRaycast.collider != null)
+            if (playerDetectionRaycast.collider.name == "Player")
+                SwitchState(State.PlayerDetected);
     }
     private void ExitIdleState()
     {
         enemyAnim.SetBool("isIdle", false);
+    }
+    #endregion
+
+    #region Player Detected State
+    private void EnterPlayerDetectedState()
+    {
+        isPlayerDetectedStateTimeOver = false;
+        startPlayerDetectedTime = Time.time;
+        SetVelocity(0f);
+        enemyAnim.SetBool("isPlayerDetected", true);
+    }
+    private void UpdatePlayerDetectedState()
+    {
+        if (Time.time >= startPlayerDetectedTime + playerDetectedTimeDuration)
+        {
+            SwitchState(State.Chase);
+            isPlayerDetectedStateTimeOver = true;
+        }
+
+        if (playerDetectionRaycast.collider != null && isPlayerDetectedStateTimeOver)
+        {
+            if (playerDetectionRaycast.collider.name != "Player")
+                SwitchState(State.Moving);
+        }
+        else if (playerDetectionRaycast.collider == null && attackPlayerRaycast.collider == null && isPlayerDetectedStateTimeOver)
+            SwitchState(State.Moving);
+
+        if (attackPlayerRaycast.collider != null)
+            if (attackPlayerRaycast.collider.name == "Player")
+                SwitchState(State.Attack);
+    }
+    private void ExitPlayerDetectedState()
+    {
+        enemyAnim.SetBool("isPlayerDetected", false);
+    }
+    #endregion
+
+    #region Chase State
+    private void EnterChaseState()
+    {
+        startChaseTime = Time.time;
+        enemyAnim.SetBool("isChasing", true);
+    }
+    private void UpdateChaseState()
+    {
+        SetVelocity(chaseSpeed);
+
+        if (Time.time >= startChaseTime + chaseTimeDuration)
+            SwitchState(State.PlayerDetected);
+
+        if (attackPlayerRaycast.collider != null)
+            if (attackPlayerRaycast.collider.name == "Player")
+                SwitchState(State.Attack);
+    }
+    private void ExitChaseState()
+    {
+        enemyAnim.SetBool("isChasing", false);
+    }
+    #endregion
+
+    #region Attack Player State
+    private void EnterAttackState()
+    {
+        isAttacking = true;
+        SetVelocity(0f);
+        enemyAnim.SetBool("isAttacking", isAttacking);
+    }
+    private void UpdateAttackState()
+    {
+        //Debug.Log("UpdateAttackState");
+        if (attackPlayerRaycast.collider != null)
+        {
+            if (attackPlayerRaycast.collider.name != "Player")
+                SwitchState(State.PlayerDetected);
+        }
+        else if (attackPlayerRaycast.collider == null)
+            SwitchState(State.PlayerDetected);
+    }
+    private void ExitAttackState()
+    {
+        enemyAnim.SetBool("isAttacking", false);
     }
     #endregion
 
@@ -133,14 +250,10 @@ public class mushroomEnemyController : MonoBehaviour
 
         rb.velocity = movement;
 
-        if (Player.position.x < rb.transform.position.x && rb.transform.rotation.y == 0)
-        {
+        if (Player.position.x < rb.transform.position.x && rb.transform.rotation.y >= 0)
             FaceFlip();
-        }
         else if(Player.position.x > rb.transform.position.x && rb.transform.rotation.y < 0)
-        {
             FaceFlip();
-        }
 
         enemyAnim.SetBool("Knockback", true);
     }
@@ -160,7 +273,6 @@ public class mushroomEnemyController : MonoBehaviour
     #endregion
 
     #region Dead State
-    // Dead /------------------------------------
     private void EnterDeadState()
     {
         Instantiate(deathChunkParticle, rb.transform.position, deathChunkParticle.transform.rotation);
@@ -177,6 +289,36 @@ public class mushroomEnemyController : MonoBehaviour
         
     }
     #endregion
+
+    public void Attack_Player()
+    {
+        Collider2D[] detectedObjects = Physics2D.OverlapCircleAll(attackPosition.position, attackRadius, playerLayer);
+        //timer = intTimer; //Reset timer
+        damage = Random.Range(minDamage, maxDamage);
+
+        attackDetails[0] = damage;
+        attackDetails[1] = transform.position.x;
+        //Debug.Log("Enemy: " + damage);
+
+        foreach (Collider2D collider in detectedObjects)
+        {
+            collider.transform.SendMessage("PlayerTakeDamage", attackDetails[0]);
+        }
+    }
+
+    public void FinishAttackAnimation()
+    {
+        isAttacking = false;
+        enemyAnim.SetBool("isAttacking", isAttacking);
+
+        if (attackPlayerRaycast.collider != null) {
+            if (attackPlayerRaycast.collider.name == "Player")
+                SwitchState(State.Attack);
+            else
+                SwitchState(State.PlayerDetected);
+        }
+    }
+
     private void Damage(float[] attackDetails)
     {
         currentHeath -= attackDetails[0];
@@ -201,6 +343,7 @@ public class mushroomEnemyController : MonoBehaviour
             SwitchState(State.Dead);
         }
     }
+
     void FaceFlip()
     {
         facingDirection *= -1;
@@ -217,8 +360,17 @@ public class mushroomEnemyController : MonoBehaviour
             case State.Idle:
                 ExitIdleState();
                 break;
+            case State.PlayerDetected:
+                ExitPlayerDetectedState();
+                break;
+            case State.Chase:
+                ExitChaseState();
+                break;
             case State.Knockback:
                 ExitKnockbackState();
+                break;
+            case State.Attack:
+                ExitAttackState();
                 break;
             case State.Dead:
                 ExitDeadState();
@@ -233,6 +385,15 @@ public class mushroomEnemyController : MonoBehaviour
             case State.Idle:
                 EnterIdleState();
                 break;
+            case State.PlayerDetected:
+                EnterPlayerDetectedState();
+                break;
+            case State.Chase:
+                EnterChaseState();
+                break;
+            case State.Attack:
+                EnterAttackState();
+                break;
             case State.Knockback:
                 EnterKnockbackState();
                 break;
@@ -243,14 +404,19 @@ public class mushroomEnemyController : MonoBehaviour
 
         currentState = st;
     }
+
     public void SetVelocity(float velocity)
     {
         movement.Set(facingDirection * velocity, rb.velocity.y);
         rb.velocity = movement;
     }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheck.position, new Vector2(groundCheck.position.x, groundCheck.position.y - groundDistanceToCheck));
-        Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x + wallDistanceToCheck, wallCheck.position.y));
+        Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x + wallDistanceToCheck, wallCheck.position.y)); 
+        Gizmos.DrawWireSphere(attackPosition.position, attackRadius);
+        Debug.DrawRay(raycastOriginPosition.position, Vector2.right * playerDetectionAreaLength);
+        Debug.DrawRay(raycastOriginPosition.position, Vector2.right * attackPlayerAreaLength, Color.red);
     }
 }
