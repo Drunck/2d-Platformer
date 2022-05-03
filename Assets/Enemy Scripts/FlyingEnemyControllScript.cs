@@ -9,6 +9,7 @@ public class FlyingEnemyControllScript : MonoBehaviour
         Patrolling,
         Idle,
         Chase,
+        ReturnToPatrol,
         Knockback,
         Attack,
         Dead
@@ -32,7 +33,7 @@ public class FlyingEnemyControllScript : MonoBehaviour
     private Animator enemyAnim;
     private Vector2 movement;
 
-    private float currentHeath, knockbackStartTime, startIdle, idleTime;
+    private float currentHeath, knockbackStartTime, startIdle, idleTime, startReturningToPatrolPointTime;
     private int 
         facingDirection,
         damageDirection,
@@ -60,6 +61,9 @@ public class FlyingEnemyControllScript : MonoBehaviour
                 break;
             case State.Chase:
                 UpdateChaseState();
+                break;
+            case State.ReturnToPatrol:
+                UpdateReturnToPatrol();
                 break;
             case State.Knockback:
                 UpdateKnockbackState();
@@ -145,6 +149,21 @@ public class FlyingEnemyControllScript : MonoBehaviour
     }
     #endregion
 
+    #region ReturnToPatrol
+    private void EnterReturnToPatrol()
+    {
+
+    }
+    private void UpdateReturnToPatrol()
+    {
+
+    }
+    private void ExitReturnToPatrol()
+    {
+
+    }
+    #endregion
+
     #region KnockBack
     private void EnterKnockbackState()
     { }
@@ -222,6 +241,9 @@ public class FlyingEnemyControllScript : MonoBehaviour
             case State.Chase:
                 ExitChaseState();
                 break;
+            case State.ReturnToPatrol:
+                ExitReturnToPatrol();
+                break;
             case State.Knockback:
                 ExitKnockbackState();
                 break;
@@ -240,6 +262,9 @@ public class FlyingEnemyControllScript : MonoBehaviour
                 break;
             case State.Chase:
                 EnterChaseState();
+                break;
+            case State.ReturnToPatrol:
+                EnterReturnToPatrol();
                 break;
             case State.Knockback:
                 EnterKnockbackState();
