@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
        
 
     private Rigidbody2D rb;
-
+    private Animator anim;
 
     bool isRight; //for checking if character turned to the right
 
@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
 
     }
 
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
         if (IsOnTheGround && Input.GetKeyDown(KeyCode.Space))
         {
             rb.velocity = Vector2.up * jumpCoefficient;
+            anim.SetBool("Jump", true);
         }
     }
 
