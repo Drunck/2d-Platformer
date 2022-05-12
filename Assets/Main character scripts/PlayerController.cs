@@ -54,6 +54,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void PlayerTakeDamage(float attackDetails)
+    {
+        Debug.Log("Player taking damage: " + attackDetails);
+    }
+
     void FaceFlip()
     {
         isRight = !isRight;
