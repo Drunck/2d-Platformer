@@ -37,7 +37,7 @@ public class MeleeEnemyController : MonoBehaviour
         
 
     public Transform groundCheck, wallCheck, Player, attackPosition, raycastOriginPosition;
-    public LayerMask ground, playerLayer;
+    public LayerMask ground, playerLayer, ignorLayer;
     public Vector2 knockbackSpeed;
     public GameObject hitParticle, deathChunkParticle;
 
@@ -76,8 +76,11 @@ public class MeleeEnemyController : MonoBehaviour
 
     void Update()
     {
-        playerDetectionRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, playerDetectionAreaLength);
-        attackPlayerRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, attackPlayerAreaLength);
+        //playerDetectionRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, playerDetectionAreaLength);
+        //attackPlayerRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, attackPlayerAreaLength);
+
+        playerDetectionRaycast = Physics2D.Raycast(transform.position, transform.right, playerDetectionAreaLength, ~ignorLayer);
+        attackPlayerRaycast = Physics2D.Raycast(transform.position, transform.right, attackPlayerAreaLength, ~ignorLayer);
 
         isGround = Physics2D.Raycast(groundCheck.position, Vector2.down, groundDistanceToCheck, ground);
         isWall = Physics2D.Raycast(wallCheck.position, transform.right, wallDistanceToCheck, ground);
@@ -423,7 +426,9 @@ public class MeleeEnemyController : MonoBehaviour
         Gizmos.DrawLine(groundCheck.position, new Vector2(groundCheck.position.x, groundCheck.position.y - groundDistanceToCheck));
         Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x + wallDistanceToCheck, wallCheck.position.y)); 
         Gizmos.DrawWireSphere(attackPosition.position, attackRadius);
-        Debug.DrawRay(raycastOriginPosition.position, Vector2.right * playerDetectionAreaLength);
-        Debug.DrawRay(raycastOriginPosition.position, Vector2.right * attackPlayerAreaLength, Color.red);
+        //Debug.DrawRay(raycastOriginPosition.position, Vector2.right * playerDetectionAreaLength);
+        //Debug.DrawRay(raycastOriginPosition.position, Vector2.right * attackPlayerAreaLength, Color.red);
+        Debug.DrawRay(transform.position, Vector2.right * playerDetectionAreaLength);
+        Debug.DrawRay(transform.position, Vector2.right * attackPlayerAreaLength, Color.red);
     }
 }
