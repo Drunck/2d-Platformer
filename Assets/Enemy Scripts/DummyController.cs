@@ -7,6 +7,7 @@ public class DummyController : MonoBehaviour
     public GameObject hitParticle;
     private Rigidbody2D rb;
     private Animator anim;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();

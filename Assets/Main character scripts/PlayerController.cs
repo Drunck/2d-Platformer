@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,8 @@ public class PlayerController : MonoBehaviour
     public float horizontalMove;
     public float speedCoefficient;
     public float jumpCoefficient;
-       
+    public float wallSlideSpeed;
+
 
     private Rigidbody2D rb;
 
@@ -15,46 +17,120 @@ public class PlayerController : MonoBehaviour
     bool isRight; //for checking if character turned to the right
 
 
-    public Transform PositionOfFeet;
-    private bool IsOnTheGround;
-    public float DistanceToCheck;
-    public LayerMask Ground;
+    public Transform PositionOfFeet, WallCheck;
 
-    // Start is called before the first frame update
+    public float DistanceToCheck, knockbackDuration, wallCheckDistance; 
+    public LayerMask Ground;
+    public Animator anim;
+    public Vector2 knockbackSpeed;
+    public Transform Player;
+
+    private PlayerCombatController playerCombatController;
+    private float knockbackStartTime;
+    private bool IsOnTheGround, IsRunning, knockback, isTouchingWall, isWallSliding;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-
+        anim = GetComponent<Animator>();
+        playerCombatController = GetComponent<PlayerCombatController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         IsOnTheGround = Physics2D.OverlapCircle(PositionOfFeet.position, DistanceToCheck, Ground);
+        isTouchingWall = Physics2D.OverlapCircle(WallCheck.position, wallCheckDistance, Ground);
 
-        if (IsOnTheGround && Input.GetKeyDown(KeyCode.Space))
+        bool attacking = playerCombatController.isAttack();
+
+        if (IsOnTheGround && Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking)
         {
             rb.velocity = Vector2.up * jumpCoefficient;
+        }
+
+        UpdateAnimations();
+        CheckWallSliding();
+        CheckKnockback();
+    }
+
+    private void CheckWallSliding()
+    {
+        if(isTouchingWall && !IsOnTheGround && rb.velocity.y < 0)
+        {
+            isWallSliding = true;
+        }
+        else
+        {
+            isWallSliding = false; 
         }
     }
 
     void FixedUpdate() 
     {
-        horizontalMove = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(horizontalMove * speedCoefficient, rb.velocity.y);
-        if (isRight && horizontalMove > 0)
+        if (!knockback)
         {
-            FaceFlip();
+            horizontalMove = Input.GetAxis("Horizontal");
+            rb.velocity = new Vector2(horizontalMove * speedCoefficient, rb.velocity.y);
+            if (isRight && horizontalMove > 0)
+            {
+                FaceFlip();
+            }
+            else if (!isRight & horizontalMove < 0)
+            {
+                FaceFlip();
+            }
 
-        } else if (!isRight & horizontalMove < 0)
+            if (rb.velocity.x != 0.0f && IsOnTheGround)
+            {
+                IsRunning = true;
+            }
+            else
+            {
+                IsRunning = false;
+            }
+        }
+        if (isWallSliding)
         {
-            FaceFlip();
+            if (rb.velocity.y < -wallSlideSpeed)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
+            }
         }
     }
 
-    void PlayerTakeDamage(float attackDetails)
+    private void UpdateAnimations()
     {
-        Debug.Log("Player taking damage: " + attackDetails);
+        anim.SetBool("isTookDamage", knockback);
+        anim.SetBool("isRunning", IsRunning);
+        anim.SetBool("isGrounded", IsOnTheGround);
+        anim.SetFloat("yVelocity", rb.velocity.y);
+        anim.SetBool("isWallSliding", isWallSliding);
+    }
+
+    public bool canAttack()
+    {
+        return (IsOnTheGround && !IsRunning);
+    }
+
+    public void Knockback(int damageDirection, float enemyPosition)
+    {
+        knockback = true;
+        knockbackStartTime = Time.time;
+        rb.velocity = new Vector2(knockbackSpeed.x * damageDirection, knockbackSpeed.y);
+
+        if (enemyPosition < rb.transform.position.x && rb.transform.localScale.x >= 0)
+            FaceFlip();
+        else if (enemyPosition > rb.transform.position.x && rb.transform.localScale.x < 0)
+            FaceFlip();
+    }
+
+    private void CheckKnockback()
+    {
+        if (Time.time >= knockbackStartTime + knockbackDuration && knockback)
+        {
+            knockback = false;
+            rb.velocity = new Vector2(0.0f, rb.velocity.y);
+        }
     }
 
     void FaceFlip()
@@ -65,5 +141,9 @@ public class PlayerController : MonoBehaviour
         transform.localScale = temp;
     }
 
-
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(PositionOfFeet.position, DistanceToCheck);
+        Gizmos.DrawWireSphere(WallCheck.position, wallCheckDistance);
+    }
 }

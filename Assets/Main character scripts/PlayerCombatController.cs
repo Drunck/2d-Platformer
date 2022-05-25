@@ -6,19 +6,25 @@ public class PlayerCombatController : MonoBehaviour
 {
     public Transform attack_1AttackPosition;
     public LayerMask damageableObject;
-    public float attack_1Radius, attack_1Damage, inputTimer;
+    public GameObject hitParticle;
+    public float attack_1Radius, inputTimer;
+    public int attack_1Damage;
 
     public bool combatEnabled;
-    private bool gotInput, isAttacking, isFirstAttack;
+    private bool gotInput, isAttacking, isFirstAttack, tookDamage;
     private float lastInputTime = Mathf.NegativeInfinity;
     private float[] attackDetails = new float[2];
+    private int damageDirection;
     private Animator anim;
-
+    private Rigidbody2D rb;
+    private PlayerController playerController;
 
     void Start()
     {
         anim = GetComponent<Animator>();
         anim.SetBool("canAttack", combatEnabled);
+        rb = GetComponent<Rigidbody2D>();
+        playerController = GetComponent<PlayerController>();
     }
     // Update is called once per frame
     void Update()
@@ -31,7 +37,7 @@ public class PlayerCombatController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            if(combatEnabled)
+            if (combatEnabled && playerController.canAttack())
             {
                 gotInput = true;
                 lastInputTime = Time.time;
@@ -73,11 +79,33 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
+    void PlayerTakeDamage(float[] attackDetails)
+    {
+        tookDamage = true;
+        Instantiate(hitParticle, rb.transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360.0f)));
+        Debug.Log("Player taking damage: " + attackDetails[0] + "P: " + transform.position.x);
+        if (attackDetails[1] > transform.position.x)
+        {
+            damageDirection = -1;
+        }
+        else
+        {
+            damageDirection = 1;
+        }
+
+        playerController.Knockback(damageDirection, attackDetails[1]);
+    }
+
     void FinishAttack1()
     {
         isAttacking = false;
         anim.SetBool("isAttacking", isAttacking);
         anim.SetBool("attack_1", false);
+    }
+
+    public bool isAttack()
+    {
+        return isAttacking;
     }
 
     private void OnDrawGizmos()

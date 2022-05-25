@@ -18,7 +18,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Drop
   - 
   - 
   - 
@@ -51,6 +51,12 @@ TagManager:
   - name: Map
     uniqueID: 4044558573
     locked: 0
+  - name: drop
+    uniqueID: 2863418267
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: PopUpText
+    uniqueID: 1696021431
     locked: 0
