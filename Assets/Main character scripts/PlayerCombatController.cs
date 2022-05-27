@@ -11,13 +11,14 @@ public class PlayerCombatController : MonoBehaviour
     public int attack_1Damage;
 
     public bool combatEnabled;
-    private bool gotInput, isAttacking, isFirstAttack, tookDamage;
+    private bool gotInput, isAttacking, isFirstAttack;
     private float lastInputTime = Mathf.NegativeInfinity;
     private float[] attackDetails = new float[2];
     private int damageDirection;
+    private PlayerController playerController;
+
     private Animator anim;
     private Rigidbody2D rb;
-    private PlayerController playerController;
 
     void Start()
     {
@@ -81,7 +82,6 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerTakeDamage(float[] attackDetails)
     {
-        tookDamage = true;
         Instantiate(hitParticle, rb.transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360.0f)));
         Debug.Log("Player taking damage: " + attackDetails[0] + "P: " + transform.position.x);
         if (attackDetails[1] > transform.position.x)
