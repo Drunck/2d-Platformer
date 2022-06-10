@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5200783512062404882}
   - component: {fileID: 5200783512062404885}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PF Village Props - Platform M
   m_TagString: Untagged
   m_Icon: {fileID: 0}

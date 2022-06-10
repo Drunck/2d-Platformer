@@ -81,13 +81,14 @@ TagManager:
   - name: Ground
     uniqueID: 3097025525
     locked: 0
+  - name: Damageable
+    uniqueID: 889363859
+    locked: 0
   - name: Player
     uniqueID: 1610250373
+    locked: 0
   - name: drop
     uniqueID: 2863418267
-    locked: 0
-  - name: Default
-    uniqueID: 0
     locked: 0
   - name: PopUpText
     uniqueID: 1696021431
