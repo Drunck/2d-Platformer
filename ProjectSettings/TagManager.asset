@@ -39,6 +39,24 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: bgimg
+    uniqueID: 3988895709
+    locked: 0
+  - name: farobj
+    uniqueID: 4100619101
+    locked: 0
+  - name: envobj
+    uniqueID: 2741981265
+    locked: 0
+  - name: phobj
+    uniqueID: 3402292597
+    locked: 0
+  - name: closeobj
+    uniqueID: 1667121819
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
   - name: Background
     uniqueID: 21976803
     locked: 0
@@ -51,8 +69,8 @@ TagManager:
   - name: Map
     uniqueID: 4044558573
     locked: 0
-  - name: Default
-    uniqueID: 0
+  - name: main hero
+    uniqueID: 1600976837
     locked: 0
   - name: bgrd
     uniqueID: 194300597
