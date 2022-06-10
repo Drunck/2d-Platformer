@@ -18,7 +18,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Drop
   - 
   - 
   - 
@@ -83,4 +83,12 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 1610250373
+  - name: drop
+    uniqueID: 2863418267
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: PopUpText
+    uniqueID: 1696021431
     locked: 0

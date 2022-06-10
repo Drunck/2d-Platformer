@@ -11,6 +11,7 @@ public class MeleeEnemyController : MonoBehaviour
         PlayerDetected,
         Chase,
         Attack,
+        LookingForPlayer,
         Knockback,
         Dead
     }
@@ -27,7 +28,9 @@ public class MeleeEnemyController : MonoBehaviour
         attackRadius,
         chaseSpeed = 4f,
         playerDetectedTimeDuration = 0.5f,
-        chaseTimeDuration = 0.2f;
+        chaseTimeDuration = 0.2f,
+        numberOfTurns,
+        lookingForPlayerTimeDuration = 0.5f;
 
     public int
         minIdleDuration,
@@ -37,10 +40,12 @@ public class MeleeEnemyController : MonoBehaviour
         
 
     public Transform groundCheck, wallCheck, Player, attackPosition, raycastOriginPosition;
-    public LayerMask ground, playerLayer;
+    public LayerMask ground, playerLayer, ignorLayer;
     public Vector2 knockbackSpeed;
     public GameObject hitParticle, deathChunkParticle;
-
+    public EnemiesScriptableObjects enemyScripObj;
+    
+    private DropLoot dropLoot;
     private State currentState;
     private Rigidbody2D rb;
     private Animator enemyAnim;
@@ -59,25 +64,35 @@ public class MeleeEnemyController : MonoBehaviour
         idleTime,
         startPlayerDetectedTime,
         startChaseTime,
-        startAttackCooldownTime;
+        startAttackCooldownTime,
+        startLookingForPlayerTime,
+        countTurns;
 
     private float[] attackDetails = new float[2];
 
     private int facingDirection, damageDirection, damage;
+    private bool shouldTurn;
 
     void Start()
     {
+        minDamage = enemyScripObj.minDamage;
+        maxDamage = enemyScripObj.maxDamage;
+        maxHealth = enemyScripObj.health;
+
         rb = GetComponent<Rigidbody2D>();
         enemyAnim = GetComponent<Animator>();
-
+        dropLoot = GetComponent<DropLoot>();
         currentHeath = maxHealth;
         facingDirection = 1;
     }
 
     void Update()
     {
-        playerDetectionRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, playerDetectionAreaLength);
-        attackPlayerRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, attackPlayerAreaLength);
+        playerDetectionRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, playerDetectionAreaLength, ~ignorLayer);
+        attackPlayerRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, attackPlayerAreaLength, ~ignorLayer);
+
+        //playerDetectionRaycast = Physics2D.Raycast(transform.position - transform.up * 0.3f, transform.right, playerDetectionAreaLength, ~ignorLayer);
+        //attackPlayerRaycast = Physics2D.Raycast(transform.position - transform.up * 0.3f, transform.right, attackPlayerAreaLength, ~ignorLayer);
 
         isGround = Physics2D.Raycast(groundCheck.position, Vector2.down, groundDistanceToCheck, ground);
         isWall = Physics2D.Raycast(wallCheck.position, transform.right, wallDistanceToCheck, ground);
@@ -98,6 +113,9 @@ public class MeleeEnemyController : MonoBehaviour
                 break;
             case State.Attack:
                 UpdateAttackState();
+                break;
+            case State.LookingForPlayer:
+                UpdateLookingForPlayerState();
                 break;
             case State.Knockback:
                 UpdateKnockbackState();
@@ -181,10 +199,10 @@ public class MeleeEnemyController : MonoBehaviour
         if (playerDetectionRaycast.collider != null && isPlayerDetectedStateTimeOver)
         {
             if (playerDetectionRaycast.collider.name != "Player")
-                SwitchState(State.Moving);
+                SwitchState(State.LookingForPlayer);
         }
-        else if (playerDetectionRaycast.collider == null && attackPlayerRaycast.collider == null && isPlayerDetectedStateTimeOver)
-            SwitchState(State.Moving);
+        else if (playerDetectionRaycast.collider == null && isPlayerDetectedStateTimeOver)
+            SwitchState(State.LookingForPlayer);
 
         if (attackPlayerRaycast.collider != null)
         {
@@ -247,6 +265,40 @@ public class MeleeEnemyController : MonoBehaviour
     }
     #endregion
 
+    #region Looking For Player State
+    private void EnterLookingForPlayerState()
+    {
+        enemyAnim.SetBool("isIdle", true);
+        shouldTurn = true;
+    }
+
+    private void UpdateLookingForPlayerState()
+    {
+        if(shouldTurn)
+        {
+            FaceFlip();
+            startLookingForPlayerTime = Time.time; // last time when enemy is turned
+            shouldTurn = false;
+        }
+        else if (Time.time >= startLookingForPlayerTime + lookingForPlayerTimeDuration && countTurns < numberOfTurns)
+        {
+            FaceFlip();
+            startLookingForPlayerTime = Time.time; // last time when enemy is turned
+            countTurns++;
+        }
+
+        if(Time.time >= startLookingForPlayerTime + lookingForPlayerTimeDuration && countTurns >= numberOfTurns)
+        {
+            SwitchState(State.Moving);
+        }
+    }
+
+    private void ExitLookingForPlayerState()
+    {
+        enemyAnim.SetBool("isIdle", false);
+    }
+    #endregion
+
     #region Knockback State
     private void EnterKnockbackState()
     {
@@ -282,6 +334,7 @@ public class MeleeEnemyController : MonoBehaviour
     private void EnterDeadState()
     {
         Instantiate(deathChunkParticle, rb.transform.position, deathChunkParticle.transform.rotation);
+        dropLoot.DropItem();
         Destroy(gameObject);
     }
 
@@ -310,7 +363,7 @@ public class MeleeEnemyController : MonoBehaviour
 
         foreach (Collider2D collider in detectedObjects)
         {
-            collider.transform.SendMessage("PlayerTakeDamage", attackDetails[0]);
+            collider.transform.SendMessage("PlayerTakeDamage", attackDetails);
         }
     }
 
@@ -331,7 +384,7 @@ public class MeleeEnemyController : MonoBehaviour
         currentHeath -= attackDetails[0];
 
         Instantiate(hitParticle, rb.transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360.0f)));
-
+        
         if (attackDetails[1] > rb.transform.position.x)
         {
             damageDirection = -1;
@@ -379,6 +432,9 @@ public class MeleeEnemyController : MonoBehaviour
             case State.Attack:
                 ExitAttackState();
                 break;
+            case State.LookingForPlayer:
+                ExitLookingForPlayerState();
+                break;
             case State.Dead:
                 ExitDeadState();
                 break;
@@ -400,6 +456,9 @@ public class MeleeEnemyController : MonoBehaviour
                 break;
             case State.Attack:
                 EnterAttackState();
+                break;
+            case State.LookingForPlayer:
+                EnterLookingForPlayerState();
                 break;
             case State.Knockback:
                 EnterKnockbackState();
@@ -425,5 +484,7 @@ public class MeleeEnemyController : MonoBehaviour
         Gizmos.DrawWireSphere(attackPosition.position, attackRadius);
         Debug.DrawRay(raycastOriginPosition.position, Vector2.right * playerDetectionAreaLength);
         Debug.DrawRay(raycastOriginPosition.position, Vector2.right * attackPlayerAreaLength, Color.red);
+        //Debug.DrawRay(transform.position - transform.up * 0.3f, Vector2.right * playerDetectionAreaLength);
+        //Debug.DrawRay(transform.position - transform.up * 0.3f, Vector2.right * attackPlayerAreaLength, Color.red);
     }
 }
