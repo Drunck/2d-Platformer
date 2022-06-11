@@ -6,6 +6,30 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Nurkuisa Scenes/Nurkuisa first map.unity
+    path: Assets/Scenes/MainMenu.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Nurkuisa Scenes/Nurkuisa first map.unity
+    guid: c6965bae39b6a8242a57d900eaac58f5
+  - enabled: 1
+    path: Assets/Scenes/Nurkuisa Scenes/Nurkuisa second map.unity
+    guid: 230ddcf9604bb734d949745d4ad5686a
+  - enabled: 1
+    path: Assets/Scenes/Map 2/Level 1 Aizat.unity
+    guid: 034521a6b947fa04da131f811c9c2829
+  - enabled: 1
+    path: Assets/Scenes/Map 2/Level 2 Aizat.unity
+    guid: 8e25cdfe3eae4234c8f116fd9543076a
+  - enabled: 1
+    path: Assets/Scenes/1 level.unity
+    guid: d959708c58fac8f43bac1fc98afa2b7f
+  - enabled: 1
+    path: Assets/Scenes/2 level.unity
+    guid: c6884ba9b65bd4046bd3db48d39b189a
+  - enabled: 1
+    path: Assets/Scenes/3 level.unity
+    guid: 22981d4c370e1974f870088fb6ad24b0
+  - enabled: 1
+    path: Assets/Scenes/Almat MAP.unity
+    guid: 104b0d14871d44f4881963af94f49350
   m_configObjects: {}
