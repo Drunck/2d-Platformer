@@ -14,8 +14,7 @@ TagManager:
   - UI
   - Ground
   - Player
-
-  - Damageable
+  - 
   - 
   - 
   - 
@@ -40,33 +39,24 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Background
-    uniqueID: 21976803
-    locked: 0
-  - name: Background details
-    uniqueID: 1978324591
-    locked: 0
-  - name: Details
-    uniqueID: 1990390023
-    locked: 0
-  - name: Map
-    uniqueID: 4044558573
-    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: bgrd
-    uniqueID: 194300597
+  - name: background
+    uniqueID: 521926407
     locked: 0
-  - name: decorations
-    uniqueID: 593045297
+  - name: decoration1
+    uniqueID: 294493133
     locked: 0
-  - name: Ground
-    uniqueID: 3097025525
+  - name: decoration2
+    uniqueID: 1772806563
     locked: 0
-  - name: Enemies
-    uniqueID: 1359261079
+  - name: ground
+    uniqueID: 2275603591
     locked: 0
-  - name: Player
-    uniqueID: 1610250373
+  - name: enemy
+    uniqueID: 3047786583
+    locked: 0
+  - name: player
+    uniqueID: 688168927
     locked: 0

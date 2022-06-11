@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Attack : MonoBehaviour
+public class Enemy_Attac : MonoBehaviour
 {
     private int damage;
     public int maxDamage;
