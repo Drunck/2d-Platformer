@@ -84,10 +84,11 @@ TagManager:
   - name: Damageable
     uniqueID: 889363859
     locked: 0
-  - name: Player
-    uniqueID: 1610250373
   - name: ground
     uniqueID: 2275603591
+    locked: 0
+  - name: Player
+    uniqueID: 1610250373
     locked: 0
   - name: enemy
     uniqueID: 3047786583
