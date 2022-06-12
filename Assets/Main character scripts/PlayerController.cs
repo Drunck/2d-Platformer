@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("Jump", true);
         }
 
+       
         UpdateAnimations();
         CheckWallSliding();
         CheckKnockback();
