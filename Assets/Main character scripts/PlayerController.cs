@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
 
 
     private Rigidbody2D rb;
-
+    private Animator anim;
 
     bool isRight; //for checking if character turned to the right
 
@@ -21,7 +21,6 @@ public class PlayerController : MonoBehaviour
 
     public float DistanceToCheck, knockbackDuration, wallCheckDistance; 
     public LayerMask Ground;
-    public Animator anim;
     public Vector2 knockbackSpeed;
     public Transform Player;
 
@@ -46,6 +45,7 @@ public class PlayerController : MonoBehaviour
         if (IsOnTheGround && Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking)
         {
             rb.velocity = Vector2.up * jumpCoefficient;
+            anim.SetBool("Jump", true);
         }
 
         UpdateAnimations();

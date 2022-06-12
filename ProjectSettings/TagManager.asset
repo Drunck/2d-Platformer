@@ -14,7 +14,7 @@ TagManager:
   - UI
   - Ground
   - Player
-  - Damageable
+  - 
   - 
   - 
   - 
@@ -72,20 +72,25 @@ TagManager:
   - name: main hero
     uniqueID: 1600976837
     locked: 0
-  - name: bgrd
-    uniqueID: 194300597
+  - name: background
+    uniqueID: 521926407
     locked: 0
-  - name: decorations
-    uniqueID: 593045297
+  - name: decoration1
+    uniqueID: 294493133
     locked: 0
-  - name: Ground
-    uniqueID: 3097025525
+  - name: decoration2
+    uniqueID: 1772806563
     locked: 0
   - name: Damageable
     uniqueID: 889363859
     locked: 0
   - name: Player
     uniqueID: 1610250373
+  - name: ground
+    uniqueID: 2275603591
+    locked: 0
+  - name: enemy
+    uniqueID: 3047786583
     locked: 0
   - name: drop
     uniqueID: 2863418267

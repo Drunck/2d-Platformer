@@ -6,31 +6,61 @@ public class PlayerHealth : MonoBehaviour
 {
     public bool isDead = false;
     public float MaxHealth;
-    private float currentHealth;
-    
+    public float heal;
+    public float healPoint;
+    private bool isHurt;
+    public float currentHealth;
+    private Animator anim;
+    public HealthBar healthbar;
+
     void Start()
     {
         currentHealth = MaxHealth;
+        healthbar.SetMaxHealth(MaxHealth);
+        anim = GetComponent<Animator>();
     }
 
-    public void TakeDamage(float damage)
-    {
-        currentHealth -= damage;
-        //Animation
+   
 
+    public void PLayerTakeDamage(float damage)
+    {
+        isHurt = true;
+        currentHealth -= damage;
+        healthbar.SetHealth(currentHealth);
         if (currentHealth <= 0.0f)
         {
-            Die(); 
+           //anim.SetBool("Hurt", false);
+          //anim.SetBool("Die", true);
         }
     }
 
-    private void Die()
+
+/*    public void TakeDamageOff()
+    {
+        anim.SetBool("Hurt", false);
+    }*/
+
+    public void Die()
     {
         isDead = true;
-        //Animation
+        Destroy(gameObject);
     }
-    void Update()
+
+    public void Update()
     {
-        
+        if (isHurt)
+        {
+            //anim.SetBool("Hurt", true);
+            isHurt = !isHurt;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (currentHealth <= healPoint)
+        {
+            currentHealth += Time.deltaTime * heal;
+            healthbar.SetHealth(currentHealth);
+        }
     }
 }

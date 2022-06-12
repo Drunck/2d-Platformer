@@ -22,7 +22,6 @@ public class Enemy_Attack : MonoBehaviour
 
     public float timer;
     private float intTimer; //initial value of timer
-    private bool canAttack, cooling;
 
     public void Start()
     {
