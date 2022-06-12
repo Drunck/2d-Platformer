@@ -16,7 +16,7 @@ public class PlayerCombatController : MonoBehaviour
     private float[] attackDetails = new float[2];
     private int damageDirection;
     private PlayerController playerController;
-
+    private PlayerHealth playerHealth;
     private Animator anim;
     private Rigidbody2D rb;
 
@@ -26,6 +26,7 @@ public class PlayerCombatController : MonoBehaviour
         anim.SetBool("canAttack", combatEnabled);
         rb = GetComponent<Rigidbody2D>();
         playerController = GetComponent<PlayerController>();
+        playerHealth = GetComponent<PlayerHealth>();
     }
     // Update is called once per frame
     void Update()
@@ -84,6 +85,7 @@ public class PlayerCombatController : MonoBehaviour
     {
         Instantiate(hitParticle, rb.transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360.0f)));
         Debug.Log("Player taking damage: " + attackDetails[0] + "P: " + transform.position.x);
+        playerHealth.TakeDamage(attackDetails[0]);
         if (attackDetails[1] > transform.position.x)
         {
             damageDirection = -1;
