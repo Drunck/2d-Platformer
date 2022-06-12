@@ -69,7 +69,7 @@ public class Enemy_Attack : MonoBehaviour
 
         foreach (Collider2D collider in detectedObjects)
         {
-            collider.transform.SendMessage("PLayerTakeDamage", attackDetails[0]);
+            collider.transform.SendMessage("PlayerTakeDamage", attackDetails);
             
         }
     }
