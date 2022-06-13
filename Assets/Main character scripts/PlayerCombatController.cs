@@ -20,6 +20,8 @@ public class PlayerCombatController : MonoBehaviour
     private Animator anim;
     private Rigidbody2D rb;
 
+    [SerializeField] private AudioSource AttackSoundEffect;
+
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -41,6 +43,7 @@ public class PlayerCombatController : MonoBehaviour
         {
             if (combatEnabled && playerController.canAttack())
             {
+                AttackSoundEffect.Play();
                 gotInput = true;
                 lastInputTime = Time.time;
             }

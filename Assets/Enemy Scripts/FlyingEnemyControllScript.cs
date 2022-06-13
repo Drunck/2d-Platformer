@@ -48,6 +48,10 @@ public class FlyingEnemyControllScript : MonoBehaviour
     private RaycastHit2D attackPlayerRaycast;
     private DropLoot dropLoot;
 
+    [SerializeField] private AudioSource BatAttackSound;
+    [SerializeField] private AudioSource BatFlyingSound;
+
+
     private float 
         currentHeath, 
         knockbackStartTime, 
@@ -183,14 +187,20 @@ public class FlyingEnemyControllScript : MonoBehaviour
     }
     public void UpdatePlayerDetectedState()
     {
+
         if (distanceToPlayer <= minAggroRange)
         {
+            BatFlyingSound.Play();
             SwitchState(State.Chase);
         }
-        else if (distanceToPlayer <= maxAggroRange)
+        
+        else if (distanceToPlayer >= maxAggroRange)
         {
+            BatFlyingSound.Stop();
+
             SwitchState(State.ReturnToPatrol);
         }
+       
 
         if (attackPlayerRaycast.collider != null)
         {
@@ -315,6 +325,7 @@ public class FlyingEnemyControllScript : MonoBehaviour
     #region Attack Player State
     private void EnterAttackState()
     {
+        BatAttackSound.Play();
         enemyAnim.SetBool("isAttacking", true);
     }
     private void UpdateAttackState()
@@ -336,9 +347,14 @@ public class FlyingEnemyControllScript : MonoBehaviour
     #region Dead State
     private void EnterDeadState()
     {
+       
         Instantiate(deathChunkParticle, rb.transform.position, deathChunkParticle.transform.rotation);
         dropLoot.DropItem();
         Destroy(gameObject);
+        BatAttackSound.Stop();
+        BatFlyingSound.Stop();
+
+
     }
     private void UpdateDeadState()
     { }
@@ -430,6 +446,7 @@ public class FlyingEnemyControllScript : MonoBehaviour
         enemyAnim.SetBool("isAttacking", false);
         if (attackPlayerRaycast.collider != null)
         {
+            
             if (attackPlayerRaycast.collider.name == "Player")
                 SwitchState(State.Attack);
         }

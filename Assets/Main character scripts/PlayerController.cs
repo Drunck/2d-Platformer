@@ -28,6 +28,10 @@ public class PlayerController : MonoBehaviour
     private float knockbackStartTime;
     private bool IsOnTheGround, IsRunning, knockback, isTouchingWall, isWallSliding;
 
+    [SerializeField] private AudioSource JumpSoundEffect;
+    [SerializeField] private AudioSource RunSoundEffect;
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -44,11 +48,21 @@ public class PlayerController : MonoBehaviour
 
         if (IsOnTheGround && Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking)
         {
+            JumpSoundEffect.Play();
             rb.velocity = Vector2.up * jumpCoefficient;
             anim.SetBool("Jump", true);
         }
 
-       
+      /*  if (!Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)) )
+        {
+            RunSoundEffect.Play();
+        }
+        else if (!Input.GetKeyDown(KeyCode.A) || !Input.GetKeyDown(KeyCode.D) || !Input.GetKeyDown(KeyCode.LeftArrow) || !Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            RunSoundEffect.Pause();
+        }*/
+
+
         UpdateAnimations();
         CheckWallSliding();
         CheckKnockback();
@@ -70,24 +84,46 @@ public class PlayerController : MonoBehaviour
     {
         if (!knockback)
         {
+
             horizontalMove = Input.GetAxis("Horizontal");
             rb.velocity = new Vector2(horizontalMove * speedCoefficient, rb.velocity.y);
             if (isRight && horizontalMove > 0)
             {
                 FaceFlip();
+                
             }
             else if (!isRight & horizontalMove < 0)
             {
+
                 FaceFlip();
             }
 
             if (rb.velocity.x != 0.0f && IsOnTheGround)
             {
+
                 IsRunning = true;
             }
             else
             {
                 IsRunning = false;
+            }
+
+            if (IsRunning && IsOnTheGround)
+            {
+               
+                if (!IsOnTheGround)
+                {
+                    RunSoundEffect.Stop();
+
+                }
+                else if (!RunSoundEffect.isPlaying)
+                {
+                    RunSoundEffect.Play();
+                }
+            }
+            else
+            {
+                RunSoundEffect.Stop();
             }
         }
         if (isWallSliding)
@@ -136,6 +172,7 @@ public class PlayerController : MonoBehaviour
 
     void FaceFlip()
     {
+        
         isRight = !isRight;
         Vector3 temp = transform.localScale;
         temp.x *= -1;

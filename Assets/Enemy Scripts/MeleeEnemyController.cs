@@ -52,6 +52,10 @@ public class MeleeEnemyController : MonoBehaviour
     private Vector2 movement;
     private RaycastHit2D playerDetectionRaycast, attackPlayerRaycast;
 
+    [SerializeField] private AudioSource MushroomAttackSound;
+    [SerializeField] private AudioSource MushroomWalkingSound;
+
+
     private bool 
         isGround, 
         isWall, 
@@ -183,6 +187,7 @@ public class MeleeEnemyController : MonoBehaviour
     #region Player Detected State
     private void EnterPlayerDetectedState()
     {
+        MushroomWalkingSound.Play();
         isPlayerDetectedStateTimeOver = false;
         startPlayerDetectedTime = Time.time;
         SetVelocity(0f);
@@ -215,6 +220,8 @@ public class MeleeEnemyController : MonoBehaviour
     }
     private void ExitPlayerDetectedState()
     {
+        MushroomWalkingSound.Stop();
+
         enemyAnim.SetBool("isPlayerDetected", false);
     }
     #endregion
@@ -245,6 +252,7 @@ public class MeleeEnemyController : MonoBehaviour
     #region Attack Player State
     private void EnterAttackState()
     {
+        MushroomAttackSound.Play();
         SetVelocity(0f);
         enemyAnim.SetBool("isAttacking", true);
     }
@@ -333,6 +341,9 @@ public class MeleeEnemyController : MonoBehaviour
     #region Dead State
     private void EnterDeadState()
     {
+        MushroomAttackSound.Stop();
+        MushroomWalkingSound.Stop();
+
         Instantiate(deathChunkParticle, rb.transform.position, deathChunkParticle.transform.rotation);
         dropLoot.DropItem();
         Destroy(gameObject);
