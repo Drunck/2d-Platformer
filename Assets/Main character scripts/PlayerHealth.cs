@@ -4,56 +4,52 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public bool isDead = false;
+    public bool isDead;
     public float MaxHealth;
     public float heal;
     public float healPoint;
-    private bool isHurt;
     public float currentHealth;
     private Animator anim;
     public HealthBar healthbar;
-
+    public GameObject menu;
     void Start()
     {
         currentHealth = MaxHealth;
         healthbar.SetMaxHealth(MaxHealth);
         anim = GetComponent<Animator>();
+        isDead = false;
     }
 
-   
 
-    public void PLayerTakeDamage(float damage)
+
+
+    public void TakeDamage(float damage)
     {
-        isHurt = true;
+        
         currentHealth -= damage;
         healthbar.SetHealth(currentHealth);
         if (currentHealth <= 0.0f)
         {
-           //anim.SetBool("Hurt", false);
-          //anim.SetBool("Die", true);
+            anim.SetBool("isDead", true);
+            isDead = true;
+            menu.SetActive(true);
+            Time.timeScale = 0;
         }
     }
 
 
-/*    public void TakeDamageOff()
-    {
-        anim.SetBool("Hurt", false);
-    }*/
+
 
     public void Die()
     {
+
         isDead = true;
-        Destroy(gameObject);
+        //Destroy(gameObject);
+        menu.SetActive(true);
+        Time.timeScale = 0;
     }
 
-    public void Update()
-    {
-        if (isHurt)
-        {
-            //anim.SetBool("Hurt", true);
-            isHurt = !isHurt;
-        }
-    }
+
 
     private void FixedUpdate()
     {

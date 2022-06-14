@@ -37,7 +37,8 @@ public class MeleeEnemyController : MonoBehaviour
         maxIdleDuration, 
         minDamage, 
         maxDamage;
-        
+
+   
 
     public Transform groundCheck, wallCheck, Player, attackPosition, raycastOriginPosition;
     public LayerMask ground, playerLayer, ignorLayer;
@@ -51,9 +52,10 @@ public class MeleeEnemyController : MonoBehaviour
     private Animator enemyAnim;
     private Vector2 movement;
     private RaycastHit2D playerDetectionRaycast, attackPlayerRaycast;
+    private PlayerHealth playerHealth;
 
-    [SerializeField] private AudioSource MushroomAttackSound;
-    [SerializeField] private AudioSource MushroomWalkingSound;
+    //[SerializeField] private AudioSource MushroomAttackSound;
+    //[SerializeField] private AudioSource MushroomWalkingSound;
 
 
     private bool 
@@ -86,6 +88,7 @@ public class MeleeEnemyController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         enemyAnim = GetComponent<Animator>();
         dropLoot = GetComponent<DropLoot>();
+        playerHealth = GetComponent<PlayerHealth>();
         currentHeath = maxHealth;
         facingDirection = 1;
     }
@@ -187,7 +190,7 @@ public class MeleeEnemyController : MonoBehaviour
     #region Player Detected State
     private void EnterPlayerDetectedState()
     {
-        MushroomWalkingSound.Play();
+        //MushroomWalkingSound.Play();
         isPlayerDetectedStateTimeOver = false;
         startPlayerDetectedTime = Time.time;
         SetVelocity(0f);
@@ -220,7 +223,7 @@ public class MeleeEnemyController : MonoBehaviour
     }
     private void ExitPlayerDetectedState()
     {
-        MushroomWalkingSound.Stop();
+        //MushroomWalkingSound.Stop();
 
         enemyAnim.SetBool("isPlayerDetected", false);
     }
@@ -252,7 +255,7 @@ public class MeleeEnemyController : MonoBehaviour
     #region Attack Player State
     private void EnterAttackState()
     {
-        MushroomAttackSound.Play();
+        //MushroomAttackSound.Play();
         SetVelocity(0f);
         enemyAnim.SetBool("isAttacking", true);
     }
@@ -261,6 +264,7 @@ public class MeleeEnemyController : MonoBehaviour
         //Debug.Log("UpdateAttackState");
         if (attackPlayerRaycast.collider != null)
         {
+           
             if (attackPlayerRaycast.collider.name != "Player")
                 SwitchState(State.PlayerDetected);
         }
@@ -341,8 +345,8 @@ public class MeleeEnemyController : MonoBehaviour
     #region Dead State
     private void EnterDeadState()
     {
-        MushroomAttackSound.Stop();
-        MushroomWalkingSound.Stop();
+        //MushroomAttackSound.Stop();
+        //MushroomWalkingSound.Stop();
 
         Instantiate(deathChunkParticle, rb.transform.position, deathChunkParticle.transform.rotation);
         dropLoot.DropItem();
@@ -371,6 +375,7 @@ public class MeleeEnemyController : MonoBehaviour
         attackDetails[0] = damage;
         attackDetails[1] = transform.position.x;
         //Debug.Log("Enemy: " + damage);
+
 
         foreach (Collider2D collider in detectedObjects)
         {

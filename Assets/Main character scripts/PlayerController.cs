@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
         {
             JumpSoundEffect.Play();
             rb.velocity = Vector2.up * jumpCoefficient;
-            anim.SetBool("Jump", true);
+            
         }
 
       /*  if (!Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)) )

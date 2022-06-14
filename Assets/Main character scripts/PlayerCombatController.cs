@@ -88,7 +88,11 @@ public class PlayerCombatController : MonoBehaviour
     {
         Instantiate(hitParticle, rb.transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360.0f)));
         Debug.Log("Player taking damage: " + attackDetails[0] + "P: " + transform.position.x);
-        playerHealth.PLayerTakeDamage(attackDetails[0]);
+
+        float damage = attackDetails[0];
+        playerHealth.TakeDamage(damage);
+
+
         if (attackDetails[1] > transform.position.x)
         {
             damageDirection = -1;
