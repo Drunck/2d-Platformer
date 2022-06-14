@@ -32,8 +32,8 @@ public class PlayerHealth : MonoBehaviour
         {
             anim.SetBool("isDead", true);
             isDead = true;
-            menu.SetActive(true);
-            Time.timeScale = 0;
+            //menu.SetActive(true);
+            //Time.timeScale = 0;
         }
     }
 

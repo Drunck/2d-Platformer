@@ -5369,6 +5369,9 @@ TextureImporter:
   - first:
       213: -947077176424005115
     second: main_lev_build_1788
+  - first:
+      213: -2864963514015291723
+    second: main_lev_build_1789
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -43138,6 +43141,27 @@ TextureImporter:
       bones: []
       spriteID: 5020e5c635e4bd2f0800000000000000
       internalID: -947077176424005115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: main_lev_build_1789
+      rect:
+        serializedVersion: 2
+        x: 1872
+        y: 1216
+        width: 48
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b6e9acfcda9d38d0800000000000000
+      internalID: -2864963514015291723
       vertices: []
       indices: 
       edges: []
