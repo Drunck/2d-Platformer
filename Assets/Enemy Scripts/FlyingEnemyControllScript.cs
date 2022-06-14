@@ -278,7 +278,7 @@ public class FlyingEnemyControllScript : MonoBehaviour
     #region ReturnToPatrol
     private void EnterReturnToPatrol()
     {
-
+        BatFlyingSound.Stop();
     }
     private void UpdateReturnToPatrol()
     {

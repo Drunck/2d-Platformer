@@ -38,6 +38,8 @@ public class MeleeEnemyController : MonoBehaviour
         minDamage, 
         maxDamage;
 
+    public bool playDeathAnimation = false;
+
    
 
     public Transform groundCheck, wallCheck, Player, attackPosition, raycastOriginPosition;
@@ -95,6 +97,11 @@ public class MeleeEnemyController : MonoBehaviour
 
     void Update()
     {
+        if (rb.velocity.x != 0)
+            MushroomWalkingSound.Play();
+        else
+            MushroomWalkingSound.Stop();
+
         playerDetectionRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, playerDetectionAreaLength, ~ignorLayer);
         attackPlayerRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, attackPlayerAreaLength, ~ignorLayer);
 
@@ -103,6 +110,7 @@ public class MeleeEnemyController : MonoBehaviour
 
         isGround = Physics2D.Raycast(groundCheck.position, Vector2.down, groundDistanceToCheck, ground);
         isWall = Physics2D.Raycast(wallCheck.position, transform.right, wallDistanceToCheck, ground);
+
 
         switch (currentState)
         {
@@ -136,13 +144,12 @@ public class MeleeEnemyController : MonoBehaviour
     #region Moving State
     private void EnterMovingState()
     {
-
     }
 
     private void UpdateMovingState()
     {
         //Debug.Log("UpdateMovingState");
-        
+
         if (!isGround || isWall)
             SwitchState(State.Idle);
         else
@@ -233,10 +240,11 @@ public class MeleeEnemyController : MonoBehaviour
     private void EnterChaseState()
     {
         startChaseTime = Time.time;
-        enemyAnim.SetBool("isChasing", true);
+        enemyAnim.SetBool("isChasing", true); 
     }
     private void UpdateChaseState()
     {
+        
         SetVelocity(chaseSpeed);
 
         if (Time.time >= startChaseTime + chaseTimeDuration)
@@ -347,10 +355,16 @@ public class MeleeEnemyController : MonoBehaviour
     {
         //MushroomAttackSound.Stop();
         //MushroomWalkingSound.Stop();
-
-        Instantiate(deathChunkParticle, rb.transform.position, deathChunkParticle.transform.rotation);
-        dropLoot.DropItem();
-        Destroy(gameObject);
+        if (playDeathAnimation)
+        {
+            enemyAnim.SetBool("isDead", true);
+        }
+        else
+        {
+            Instantiate(deathChunkParticle, rb.transform.position, deathChunkParticle.transform.rotation);
+            dropLoot.DropItem();
+            Destroy(gameObject);
+        }
     }
 
     private void UpdateDeadState()
@@ -376,7 +390,7 @@ public class MeleeEnemyController : MonoBehaviour
         attackDetails[1] = transform.position.x;
         //Debug.Log("Enemy: " + damage);
 
-
+        MushroomAttackSound.Play();
         foreach (Collider2D collider in detectedObjects)
         {
             collider.transform.SendMessage("PlayerTakeDamage", attackDetails);
@@ -385,6 +399,7 @@ public class MeleeEnemyController : MonoBehaviour
 
     public void FinishAttackAnimation()
     {
+        MushroomAttackSound.Stop();
         enemyAnim.SetBool("isAttacking", false);
 
         if (attackPlayerRaycast.collider != null) {
@@ -492,11 +507,14 @@ public class MeleeEnemyController : MonoBehaviour
         movement.Set(facingDirection * velocity, rb.velocity.y);
         rb.velocity = movement;
     }
-
+    public void Dead()
+    {
+        Destroy(gameObject);
+    }
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheck.position, new Vector2(groundCheck.position.x, groundCheck.position.y - groundDistanceToCheck));
-        Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x + wallDistanceToCheck, wallCheck.position.y)); 
+        Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x + wallDistanceToCheck, wallCheck.position.y));
         Gizmos.DrawWireSphere(attackPosition.position, attackRadius);
         Debug.DrawRay(raycastOriginPosition.position, Vector2.right * playerDetectionAreaLength);
         Debug.DrawRay(raycastOriginPosition.position, Vector2.right * attackPlayerAreaLength, Color.red);

@@ -90,7 +90,7 @@ public class PlayerCombatController : MonoBehaviour
         Debug.Log("Player taking damage: " + attackDetails[0] + "P: " + transform.position.x);
 
         float damage = attackDetails[0];
-        playerHealth.TakeDamage(damage);
+        //playerHealth.TakeDamage(damage);
 
 
         if (attackDetails[1] > transform.position.x)
