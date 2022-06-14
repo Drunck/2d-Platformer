@@ -97,11 +97,6 @@ public class MeleeEnemyController : MonoBehaviour
 
     void Update()
     {
-        if (rb.velocity.x != 0)
-            MushroomWalkingSound.Play();
-        else
-            MushroomWalkingSound.Stop();
-
         playerDetectionRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, playerDetectionAreaLength, ~ignorLayer);
         attackPlayerRaycast = Physics2D.Raycast(raycastOriginPosition.position, transform.right, attackPlayerAreaLength, ~ignorLayer);
 
@@ -353,8 +348,6 @@ public class MeleeEnemyController : MonoBehaviour
     #region Dead State
     private void EnterDeadState()
     {
-        //MushroomAttackSound.Stop();
-        //MushroomWalkingSound.Stop();
         if (playDeathAnimation)
         {
             enemyAnim.SetBool("isDead", true);
@@ -390,7 +383,6 @@ public class MeleeEnemyController : MonoBehaviour
         attackDetails[1] = transform.position.x;
         //Debug.Log("Enemy: " + damage);
 
-        MushroomAttackSound.Play();
         foreach (Collider2D collider in detectedObjects)
         {
             collider.transform.SendMessage("PlayerTakeDamage", attackDetails);
@@ -399,7 +391,6 @@ public class MeleeEnemyController : MonoBehaviour
 
     public void FinishAttackAnimation()
     {
-        MushroomAttackSound.Stop();
         enemyAnim.SetBool("isAttacking", false);
 
         if (attackPlayerRaycast.collider != null) {
