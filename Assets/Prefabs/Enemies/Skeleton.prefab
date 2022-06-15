@@ -198,7 +198,7 @@ MonoBehaviour:
   playerDetectionAreaLength: 4
   attackCooldownDuration: 2
   attackPlayerAreaLength: 1.6
-  attackRadius: 0.5
+  attackRadius: 0.74
   chaseSpeed: 4
   playerDetectedTimeDuration: 0.5
   chaseTimeDuration: 0.6
@@ -208,6 +208,7 @@ MonoBehaviour:
   maxIdleDuration: 3
   minDamage: 5
   maxDamage: 13
+  playDeathAnimation: 0
   groundCheck: {fileID: 6138354465676564270}
   wallCheck: {fileID: 6138354466159006132}
   Player: {fileID: 0}
@@ -226,6 +227,7 @@ MonoBehaviour:
   hitParticle: {fileID: 7642270548821996233, guid: 7daba17e1ef10b646a4f1ebed8aca49e, type: 3}
   deathChunkParticle: {fileID: 5877864152261629944, guid: 876c8e434dd881941837aad66ca2c5d9, type: 3}
   enemyScripObj: {fileID: 11400000, guid: 8eb5f0f23f6a37c409b90112f8e3fad6, type: 2}
+  score: {fileID: 0}
 --- !u!114 &6138354465460936703
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -87,7 +87,7 @@ public class PlayerCombatController : MonoBehaviour
     void PlayerTakeDamage(float[] attackDetails)
     {
         Instantiate(hitParticle, rb.transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360.0f)));
-        Debug.Log("Player taking damage: " + attackDetails[0] + "P: " + transform.position.x);
+        Debug.Log("Player taking damage: " + attackDetails[0] + " P: " + transform.position.x);
 
         float damage = attackDetails[0];
         playerHealth.TakeDamage(damage);

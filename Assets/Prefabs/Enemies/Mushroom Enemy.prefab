@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7083272146747407274}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.442, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7083272147091690698}
@@ -259,8 +259,7 @@ MonoBehaviour:
   hitParticle: {fileID: 7642270548821996233, guid: 7daba17e1ef10b646a4f1ebed8aca49e, type: 3}
   deathChunkParticle: {fileID: 5877864152261629944, guid: 876c8e434dd881941837aad66ca2c5d9, type: 3}
   enemyScripObj: {fileID: 11400000, guid: 2a0fe85b49fe0e74da2be07cf1dd108f, type: 2}
-  MushroomAttackSound: {fileID: 9035112468672301404}
-  MushroomWalkingSound: {fileID: 9096141115880369696}
+  score: {fileID: 0}
 --- !u!58 &7083272147091690692
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -295,10 +294,10 @@ MonoBehaviour:
     maxDropChance: 100
   - item: {fileID: 8075073554472188852, guid: 1af08d250c143a7478d98c2b8baa1a7c, type: 3}
     minDropChance: 90
-    maxDropChance: 97
+    maxDropChance: 96
   - item: {fileID: 1860361918512070461, guid: 7a82cdb1a8afe614c8ec899922b55bfc, type: 3}
     minDropChance: 60
-    maxDropChance: 90
+    maxDropChance: 89
   enemyPos: {fileID: 7083272147091690698}
 --- !u!82 &9096141115880369696
 AudioSource:

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class Dontouchobjects : MonoBehaviour
 {
+    public GameObject PlayerDiedAwkwardlyPanel, HPCanvas;
     public void Respawn()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -15,7 +16,9 @@ public class Dontouchobjects : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Respawn();
+            HPCanvas.SetActive(false);
+            PlayerDiedAwkwardlyPanel.SetActive(true);
+            Time.timeScale = 0;
         }
     }
 }

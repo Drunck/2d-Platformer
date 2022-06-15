@@ -387,7 +387,7 @@ public class MeleeEnemyController : MonoBehaviour
 
         foreach (Collider2D collider in detectedObjects)
         {
-            collider.transform.SendMessage("PlayerTakeDamage", attackDetails);
+            collider.SendMessage("PlayerTakeDamage", attackDetails);
         }
     }
 

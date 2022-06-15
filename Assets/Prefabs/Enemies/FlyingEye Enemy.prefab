@@ -321,7 +321,7 @@ MonoBehaviour:
   minAggroRange: 5
   maxAggroRange: 7
   maxDistanceToChase: 10
-  chaseSpeed: 300
+  chaseSpeed: 230
   nextWaypointDistance: 3
   attackRadius: 0.38
   minDamage: 1
@@ -389,10 +389,10 @@ MonoBehaviour:
     maxDropChance: 100
   - item: {fileID: 8075073554472188852, guid: 1af08d250c143a7478d98c2b8baa1a7c, type: 3}
     minDropChance: 90
-    maxDropChance: 97
+    maxDropChance: 96
   - item: {fileID: 1860361918512070461, guid: 7a82cdb1a8afe614c8ec899922b55bfc, type: 3}
     minDropChance: 60
-    maxDropChance: 90
+    maxDropChance: 89
   enemyPos: {fileID: 7234400049505850892}
 --- !u!82 &2489029108446074497
 AudioSource:

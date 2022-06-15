@@ -11,7 +11,8 @@ public class PlayerHealth : MonoBehaviour
     public float currentHealth;
     private Animator anim;
     public HealthBar healthbar;
-    public GameObject menu;
+    public GameObject PlayerDiedPanel, HPCanvas;
+
     void Start()
     {
         currentHealth = MaxHealth;
@@ -45,7 +46,8 @@ public class PlayerHealth : MonoBehaviour
 
         isDead = true;
         //Destroy(gameObject);
-        menu.SetActive(true);
+        HPCanvas.SetActive(false);
+        PlayerDiedPanel.SetActive(true);
         Time.timeScale = 0;
     }
 

@@ -6,13 +6,12 @@ public class scoreCounter : MonoBehaviour
 {
     PlayerHealth playerHealth;
     PlayerCombatController playerDamage;
-    public int counter;
+    public int counter = 0;
     public Text scoreDisplay;
     void Start()
     {
         playerHealth = FindObjectOfType<PlayerHealth>();
         playerDamage = FindObjectOfType<PlayerCombatController>();
-        counter = 0;
     }
 
     public void Count()

@@ -167,8 +167,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1247180713
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b2dfec543acf3f74b85e1395f5db36b0, type: 3}
   m_Color: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
@@ -286,6 +286,7 @@ MonoBehaviour:
   hitParticle: {fileID: 7642270548821996233, guid: 7daba17e1ef10b646a4f1ebed8aca49e, type: 3}
   deathChunkParticle: {fileID: 5877864152261629944, guid: 876c8e434dd881941837aad66ca2c5d9, type: 3}
   enemyScripObj: {fileID: 11400000, guid: f5a566622b105e546ba44748c025baea, type: 2}
+  score: {fileID: 0}
 --- !u!114 &4703674832866708816
 MonoBehaviour:
   m_ObjectHideFlags: 0

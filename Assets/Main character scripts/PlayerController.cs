@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
         isRight, //for checking if character turned to the right
         canMove = true,
         canFlip = true,
+        canJump = true,
         IsOnTheGround,
         IsRunning,
         knockback,
@@ -64,9 +65,10 @@ public class PlayerController : MonoBehaviour
             ledgeDetected = true;
             canMove = false;
             canFlip = false;
+            canJump = false;
         }
 
-        if (IsOnTheGround && Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking)
+        if (IsOnTheGround && Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking && canJump)
         {
             JumpSoundEffect.Play();
             rb.velocity = Vector2.up * jumpCoefficient;
@@ -97,7 +99,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate() 
     {
         horizontalMove = Input.GetAxis("Horizontal");
-        if (!knockback && canFlip && canMove)
+        if (!knockback && canFlip && canMove && canJump)
         {
             rb.velocity = new Vector2(horizontalMove * speedCoefficient, rb.velocity.y);
             if (isRight && horizontalMove > 0)
@@ -137,6 +139,7 @@ public class PlayerController : MonoBehaviour
             }
 
         }
+
         if (isWallSliding)
         {
             if (rb.velocity.y < -wallSlideSpeed)
@@ -183,6 +186,7 @@ public class PlayerController : MonoBehaviour
         rb.gravityScale = 1;
         canMove = true;
         canFlip = true;
+        canJump = true;
     }
     private void UpdateAnimations()
     {
