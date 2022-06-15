@@ -9,24 +9,34 @@ public class PlayerController : MonoBehaviour
     public float speedCoefficient;
     public float jumpCoefficient;
     public float wallSlideSpeed;
+    public float DistanceToCheck, // for ground checking
+        knockbackDuration, wallCheckDistance, correctDistance = 0.01f;
+
+    public LayerMask Ground;
+    public Vector2 knockbackSpeed, wallJumpClimb, /*wallJumpOff,*/ wallLeap;
+    public Transform Player, PositionOfFeet, WallCheck, LedgeCheck, FinishWallClimbPosition;
 
 
     private Rigidbody2D rb;
     private Animator anim;
-
-    bool isRight; //for checking if character turned to the right
-
-
-    public Transform PositionOfFeet, WallCheck;
-
-    public float DistanceToCheck, knockbackDuration, wallCheckDistance; 
-    public LayerMask Ground;
-    public Vector2 knockbackSpeed;
-    public Transform Player;
-
     private PlayerCombatController playerCombatController;
-    private float knockbackStartTime;
-    private bool IsOnTheGround, IsRunning, knockback, isTouchingWall, isWallSliding;
+    private Vector3 velocity;
+
+
+    private int facingDirection = 1;
+    private float knockbackStartTime, offsetY;
+    private bool
+        isRight, //for checking if character turned to the right
+        canMove = true,
+        canFlip = true,
+        IsOnTheGround,
+        IsRunning,
+        knockback,
+        isTouchingWall,
+        isWallSliding,
+        isTouchingLedge,
+        canClimbWall = false,
+        ledgeDetected = false;
 
     [SerializeField] private AudioSource JumpSoundEffect;
     [SerializeField] private AudioSource RunSoundEffect;
@@ -41,10 +51,20 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        int wallDirectionX = (int)transform.localScale.x;
+
         IsOnTheGround = Physics2D.OverlapCircle(PositionOfFeet.position, DistanceToCheck, Ground);
-        isTouchingWall = Physics2D.OverlapCircle(WallCheck.position, wallCheckDistance, Ground);
+        isTouchingWall = Physics2D.Raycast(WallCheck.position, new Vector2(transform.localScale.x, 0), wallCheckDistance, Ground);
+        isTouchingLedge = Physics2D.Raycast(LedgeCheck.position, new Vector2(transform.localScale.x, 0), wallCheckDistance, Ground);
 
         bool attacking = playerCombatController.isAttack();
+
+        if (isTouchingWall && !isTouchingLedge && !ledgeDetected)
+        {
+            ledgeDetected = true;
+            canMove = false;
+            canFlip = false;
+        }
 
         if (IsOnTheGround && Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking)
         {
@@ -53,54 +73,44 @@ public class PlayerController : MonoBehaviour
             
         }
 
-      /*  if (!Input.GetKeyDown(KeyCode.Space) && !knockback && !attacking && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)) )
+        if (isWallSliding && Input.GetKeyDown(KeyCode.Space))
         {
-            RunSoundEffect.Play();
+            if (horizontalMove == 0)
+            {
+                velocity.x = -wallDirectionX * wallJumpClimb.x;
+                velocity.y = wallJumpClimb.y;
+            }
+            else
+            {
+                velocity.x = -wallDirectionX * wallLeap.x;
+                velocity.y = wallLeap.y;
+            }
+            rb.velocity = velocity;
         }
-        else if (!Input.GetKeyDown(KeyCode.A) || !Input.GetKeyDown(KeyCode.D) || !Input.GetKeyDown(KeyCode.LeftArrow) || !Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            RunSoundEffect.Pause();
-        }*/
-
 
         UpdateAnimations();
         CheckWallSliding();
         CheckKnockback();
-    }
-
-    private void CheckWallSliding()
-    {
-        if(isTouchingWall && !IsOnTheGround && rb.velocity.y < 0)
-        {
-            isWallSliding = true;
-        }
-        else
-        {
-            isWallSliding = false; 
-        }
+        CheckWallClimb();
     }
 
     void FixedUpdate() 
     {
-        if (!knockback)
+        horizontalMove = Input.GetAxis("Horizontal");
+        if (!knockback && canFlip && canMove)
         {
-
-            horizontalMove = Input.GetAxis("Horizontal");
             rb.velocity = new Vector2(horizontalMove * speedCoefficient, rb.velocity.y);
             if (isRight && horizontalMove > 0)
             {
                 FaceFlip();
-                
             }
             else if (!isRight & horizontalMove < 0)
             {
-
                 FaceFlip();
             }
 
             if (rb.velocity.x != 0.0f && IsOnTheGround)
             {
-
                 IsRunning = true;
             }
             else
@@ -110,7 +120,7 @@ public class PlayerController : MonoBehaviour
 
             if (IsRunning && IsOnTheGround)
             {
-               
+
                 if (!IsOnTheGround)
                 {
                     RunSoundEffect.Stop();
@@ -125,6 +135,7 @@ public class PlayerController : MonoBehaviour
             {
                 RunSoundEffect.Stop();
             }
+
         }
         if (isWallSliding)
         {
@@ -134,7 +145,45 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    private void CheckWallSliding()
+    {
+        if (isTouchingWall && !IsOnTheGround && rb.velocity.y < 0 && !ledgeDetected)
+        {
+            isWallSliding = true;
+        }
+        else
+        {
+            isWallSliding = false;
+        }
+    }
 
+    private void CheckWallClimb()
+    {
+        if (ledgeDetected && !canClimbWall)
+        {
+            canClimbWall = true;
+
+            offsetY = Physics2D.Raycast(new Vector2(LedgeCheck.position.x + wallCheckDistance * transform.localScale.x, LedgeCheck.position.y), Vector2.down, (LedgeCheck.position.y - WallCheck.position.y), Ground).distance;
+
+            rb.gravityScale = 0;
+            rb.velocity = new Vector2(0, 0);
+
+            transform.position = new Vector3(transform.position.x, transform.position.y - offsetY + correctDistance, transform.position.z);
+            //myanimation.Play("player_wall_climb");
+        }
+    }
+
+    public void FinishWallClimb()
+    {
+        canClimbWall = false;
+        //myanimation.Play("player_idle");
+        transform.position = FinishWallClimbPosition.position;
+
+        ledgeDetected = false;
+        rb.gravityScale = 1;
+        canMove = true;
+        canFlip = true;
+    }
     private void UpdateAnimations()
     {
         anim.SetBool("isTookDamage", knockback);
@@ -142,6 +191,7 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("isGrounded", IsOnTheGround);
         anim.SetFloat("yVelocity", rb.velocity.y);
         anim.SetBool("isWallSliding", isWallSliding);
+        anim.SetBool("canClimbWall", canClimbWall);
     }
 
     public bool canAttack()
@@ -172,16 +222,23 @@ public class PlayerController : MonoBehaviour
 
     void FaceFlip()
     {
-        
-        isRight = !isRight;
-        Vector3 temp = transform.localScale;
-        temp.x *= -1;
-        transform.localScale = temp;
+        if (canFlip && !isWallSliding)
+        {
+            facingDirection *= -1;
+            isRight = !isRight;
+            Vector3 temp = transform.localScale;
+            temp.x *= -1;
+            transform.localScale = temp;
+        }
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(PositionOfFeet.position, DistanceToCheck);
-        Gizmos.DrawWireSphere(WallCheck.position, wallCheckDistance);
+        Gizmos.DrawLine(WallCheck.position, new Vector2(WallCheck.position.x + wallCheckDistance * transform.localScale.x, WallCheck.position.y));
+        Gizmos.DrawLine(LedgeCheck.position, new Vector2(LedgeCheck.position.x + wallCheckDistance * transform.localScale.x, LedgeCheck.position.y));
+        Gizmos.color = Color.green;
+        //Debug.DrawRay(new Vector2(LedgeCheck.position.x + wallCheckDistance * transform.localScale.x, LedgeCheck.position.y), Vector2.down * (LedgeCheck.position.y - WallCheck.position.y));
+        Gizmos.DrawLine(new Vector2(LedgeCheck.position.x + wallCheckDistance * transform.localScale.x, LedgeCheck.position.y), new Vector2(WallCheck.position.x + wallCheckDistance * transform.localScale.x, WallCheck.position.y));
     }
 }
