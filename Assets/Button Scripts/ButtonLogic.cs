@@ -4,25 +4,35 @@ using UnityEngine;
 
 public class ButtonLogic : MonoBehaviour
 {
-    PlayerHealth PH;
-    PlayerCombatController PC;
+    private PlayerHealth playerHealth;
+    private PlayerCombatController playerDamage;
+    private scoreCounter score;
     public void Start()
     {
-        PH = GetComponent<PlayerHealth>();
-        PC = GetComponent<PlayerCombatController>();
+        playerHealth = FindObjectOfType<PlayerHealth>();
+        playerDamage = FindObjectOfType<PlayerCombatController>();
+        score = FindObjectOfType<scoreCounter>();
     }
 
     public void UpgradeHP()
     {
-        PH.MaxHealth += 2;
-        PH.currentHealth += 3;
+        if (score.counter > 0)
+        {
+            playerHealth.MaxHealth += 2;
+            playerHealth.currentHealth += 3;
+            score.counter--;
+        }
     }
 
     public void UpgradeDamage()
     {
-        
         int damage = Random.Range(1, 3);
+        if (score.counter > 0)
+        {
+            playerDamage.attack_1Damage += damage;
+            score.counter--;
+        }
         
-        PC.attack_1Damage += damage;
+        //PC.attack_1Damage += damage;
     }
 }

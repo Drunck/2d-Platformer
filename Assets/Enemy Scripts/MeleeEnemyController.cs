@@ -55,7 +55,7 @@ public class MeleeEnemyController : MonoBehaviour
     private Vector2 movement;
     private RaycastHit2D playerDetectionRaycast, attackPlayerRaycast;
     private PlayerHealth playerHealth;
-
+    public scoreCounter score;
     //[SerializeField] private AudioSource MushroomAttackSound;
     //[SerializeField] private AudioSource MushroomWalkingSound;
 
@@ -91,6 +91,7 @@ public class MeleeEnemyController : MonoBehaviour
         enemyAnim = GetComponent<Animator>();
         dropLoot = GetComponent<DropLoot>();
         playerHealth = GetComponent<PlayerHealth>();
+        score = FindObjectOfType<scoreCounter>();
         currentHeath = maxHealth;
         facingDirection = 1;
     }
@@ -354,6 +355,7 @@ public class MeleeEnemyController : MonoBehaviour
         }
         else
         {
+            score.Count();
             Instantiate(deathChunkParticle, rb.transform.position, deathChunkParticle.transform.rotation);
             dropLoot.DropItem();
             Destroy(gameObject);
