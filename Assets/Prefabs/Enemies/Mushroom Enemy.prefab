@@ -260,6 +260,8 @@ MonoBehaviour:
   deathChunkParticle: {fileID: 5877864152261629944, guid: 876c8e434dd881941837aad66ca2c5d9, type: 3}
   enemyScripObj: {fileID: 11400000, guid: 2a0fe85b49fe0e74da2be07cf1dd108f, type: 2}
   score: {fileID: 0}
+  MushroomAttackSound: {fileID: 9035112468672301404}
+  MushroomWalkingSound: {fileID: 9096141115880369696}
 --- !u!58 &7083272147091690692
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -310,7 +312,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 715839f542ffd6f45a949d15fc9f3ec9, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1

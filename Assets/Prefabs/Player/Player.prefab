@@ -145,7 +145,7 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: fbe1b0d06606db34b95cd8742bb1a5e2, type: 2}
-  m_Interpolate: 1
+  m_Interpolate: 2
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -559,7 +559,8 @@ MonoBehaviour:
   healPoint: 25
   currentHealth: 0
   healthbar: {fileID: 0}
-  menu: {fileID: 0}
+  PlayerDiedPanel: {fileID: 0}
+  HPCanvas: {fileID: 0}
 --- !u!1 &3908549143315150393
 GameObject:
   m_ObjectHideFlags: 0

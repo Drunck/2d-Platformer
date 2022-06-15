@@ -56,8 +56,8 @@ public class MeleeEnemyController : MonoBehaviour
     private RaycastHit2D playerDetectionRaycast, attackPlayerRaycast;
     private PlayerHealth playerHealth;
     public scoreCounter score;
-    //[SerializeField] private AudioSource MushroomAttackSound;
-    //[SerializeField] private AudioSource MushroomWalkingSound;
+    [SerializeField] private AudioSource MushroomAttackSound;
+    [SerializeField] private AudioSource MushroomWalkingSound;
 
 
     private bool 
@@ -235,6 +235,7 @@ public class MeleeEnemyController : MonoBehaviour
     #region Chase State
     private void EnterChaseState()
     {
+        MushroomWalkingSound.Play();
         startChaseTime = Time.time;
         enemyAnim.SetBool("isChasing", true); 
     }
@@ -252,6 +253,7 @@ public class MeleeEnemyController : MonoBehaviour
     }
     private void ExitChaseState()
     {
+        MushroomWalkingSound.Stop();
         enemyAnim.SetBool("isChasing", false);
     }
     #endregion
@@ -259,7 +261,7 @@ public class MeleeEnemyController : MonoBehaviour
     #region Attack Player State
     private void EnterAttackState()
     {
-        //MushroomAttackSound.Play();
+        MushroomAttackSound.Play();
         SetVelocity(0f);
         enemyAnim.SetBool("isAttacking", true);
     }

@@ -1155,6 +1155,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aee4d4fc4362c74db416ab8d32fe296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerDiedAwkwardlyPanel: {fileID: 0}
+  HPCanvas: {fileID: 0}
 --- !u!61 &274919871
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1765,11 +1767,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3908549142209591418, guid: 2a97f63a51a37634ba32112e8f5da48f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.28
+      value: 47
       objectReference: {fileID: 0}
     - target: {fileID: 3908549142209591418, guid: 2a97f63a51a37634ba32112e8f5da48f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.82
+      value: -3.7
       objectReference: {fileID: 0}
     - target: {fileID: 3908549142209591418, guid: 2a97f63a51a37634ba32112e8f5da48f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2271,6 +2273,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aee4d4fc4362c74db416ab8d32fe296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerDiedAwkwardlyPanel: {fileID: 0}
+  HPCanvas: {fileID: 0}
 --- !u!61 &515305315
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -16902,7 +16906,7 @@ GameObject:
   - component: {fileID: 927898550}
   m_Layer: 6
   m_Name: actually moving platform
-  m_TagString: Untagged
+  m_TagString: MovingPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -141137,6 +141141,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aee4d4fc4362c74db416ab8d32fe296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerDiedAwkwardlyPanel: {fileID: 0}
+  HPCanvas: {fileID: 0}
 --- !u!61 &2138999471
 BoxCollider2D:
   m_ObjectHideFlags: 0
